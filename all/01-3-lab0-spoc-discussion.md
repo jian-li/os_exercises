@@ -18,7 +18,8 @@
 哪些困难（请分优先级）会阻碍你自主完成lab实验？
 - [x]  
 
->   
+>   对操作系统的原理不了解；
+　　对intel的基本知识不够。
 
 如何把一个在gdb中或执行过程中出现的物理/线性地址与你写的代码源码位置对应起来？
 - [x]  
@@ -51,7 +52,7 @@
 ucore lab实验
 - [x]  
 
-> 
+> git clone http://www.github.ocm/chyyuu/ucore_lab
 
 尝试用qemu+gdb（or ECLIPSE-CDT）调试lab1
 - [x]   
@@ -76,7 +77,7 @@ struct gatedesc {
 
 - [x]  
 
-> 
+> 表示该数据使用的位数
 
 对于如下的代码段，
 ```
