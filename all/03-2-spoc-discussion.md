@@ -23,6 +23,17 @@ NOTICE
 - [x]  
 
 >  
+答：64位CPU支持的物理内存大小为2^64,也就是16G.
+linux 64bit CPU统一使用4级页表
+多级页表的结构：
+页全局模型
+页上级模型
+页中间模型
+页表
+cr3+global dir->global table index->upper table start addr
+upper table start addr+upper dir->upper table index->midd table start addr
+midd table start addr+middle dir->page table index->page table start addr
+addr = page table start addr+offset
 
 ## 小组思考题
 ---
@@ -31,8 +42,10 @@ NOTICE
 
 - [x]  
 
-> 500=0.9\*150+0.1\*x
-
+> 
+设不在内存中的页面的平均访问时间为x ns;
+则150*0.1+x*0.9=500000
+得x=555538.9ns
 （2）(spoc) 有一台假想的计算机，页大小（page size）为32 Bytes，支持32KB的虚拟地址空间（virtual address space）,有4KB的物理内存空间（physical memory），采用二级页表，一个页目录项（page directory entry ，PDE）大小为1 Byte,一个页表项（page-table entries
 PTEs）大小为1 Byte，1个页目录表大小为32 Bytes，1个页表大小为32 Bytes。页目录基址寄存器（page directory base register，PDBR）保存了页目录表的物理地址（按页对齐）。
 
@@ -44,7 +57,7 @@ PDE格式（8 bit） :
 ```
   VALID | PT6 ... PT0
 ```
-其
+其中
 ```
 VALID==1表示，表示映射存在；VALID==0表示，表示映射不存在。
 PFN6..0:页帧号
@@ -63,7 +76,45 @@ Virtual Address 7fd7
 Virtual Address 390e
 Virtual Address 748b
 ```
-
+Virtual Address 6c74:
+  --> pde index:0x1b  pde contents:(valid 1,pfn 0x20)
+    --> pte index:0x3 pde contents:(valid 1,pfn 0x61)
+      -->Translates to Physical Address 0x0c34 -->value:0x06
+Virtual Address 6b22:
+  --> pde index:0x1a pde contents:(valid 1,pfn 0x52)
+    --> pte index:0x19 pde contents:(valid 1,pfn 0x47)
+      -->Translates to Physical Address 0x08e2 -->value:0x1a
+Virtual Address 03df:
+  --> pde index:0xda pde contents:(valid 1,pfn 0x5a)
+    --> pte index:0x1e pde contents:(valid 1,pfn 0x5)
+      -->Translates to Physical Address 0xbf -->value:0xf
+Virtual Address 69dc:
+  --> pde index:0x1a pde contents:(valid 1,pfn 0x52)
+    --> pte index:0xe pde contents:(valid 0,pfn 0x7f)
+      -->Fault (Page table entry not valid)
+Virtual Address 317a:
+  --> pde index:0x1a pde contents:(valid 1,pfn 0x52)
+    --> pte index:0xe pde contents:(valid 0,pfn 0x7f)
+      -->Fault (Page table entry not valid)
+Virtual Address 4546:
+  --> pde index:0x22 pde contents:(valid 1,pfn 0x3f)
+    --> pte index:0x14 pde contents:(valid 0,pfn 0x7f)
+      -->Fault (Page table entry not valid)
+Virtual Address 2c03:
+  --> pde index:0x16 pde contents:(valid 1,pfn 0x53)
+    --> pte index:0xe pde contents:(valid 0,pfn 0x7f)
+      -->Fault (Page table entry not valid)
+Virtual Address 7fd7:
+  --> pde index:0x1a pde contents:(valid 1,pfn 0x52)
+    --> pte index:0xe pde contents:(valid 0,pfn 0x7f)
+      -->Fault (Page table entry not valid)
+Virtual Address 390e:
+  --> pde index:0xe pde contents:(valid 0,pfn 0x7f)
+    -->Fault (Page directory entry not valid)
+Virtual Address 748b:
+  --> pde index:0x1d pde contents:(valid 1,pfn 0x0)
+    --> pte index:0xe pde contents:(valid 0,pfn 0x7f)
+      -->Fault (Page table entry not valid)
 比如答案可以如下表示：
 ```
 Virtual Address 7570:
